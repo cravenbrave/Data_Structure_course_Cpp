@@ -131,7 +131,7 @@ public:
       position.cur->prev = newNode;
       head = newNode;
     }
-    else if (position.cur == end())//if it's a nullprt
+    else if (position.cur == end()) //if it's a nullprt
     {
       push_back(newValue);
     }
@@ -141,6 +141,44 @@ public:
       newNode->next = position.cur;
       position.cur->prev->next = newNode;
       position.cur->prev = newNode;
+    }
+    return Iterator(newNode);
+  }
+
+  Iterator erase(Iterator position)
+  {
+    if (position.cur == nullptr)
+    {
+      throw std::runtime_error("Error: Header is null pointer");
+    }
+    if (head == tail)
+    {
+      if (position.cur != head)
+      {
+        throw std::runtime_error("Error: Internal error"); // TODO throw a specific exception
+      }
+      head = nullptr;
+      tail = nullptr;
+      delete position.cur;
+      return end();
+    }
+    else if (position.cur == head)
+    {
+      head = position.cur->next;
+      head->prev = nullptr;
+      delete position.cur;
+      return begin();
+    }else if (position.cur == tail){
+      tail = position.cur -> prev;
+      tail->next = nullptr;
+      delete position.cur;
+      return end();
+    }else{
+      Iterator temp = Iterator(position.cur->next);
+      position.cur->prev->next = position.cur->next;
+      position.cur->next->prev = position.cur->prev;
+      delete position.cur;
+      return temp;
     }
   }
 };

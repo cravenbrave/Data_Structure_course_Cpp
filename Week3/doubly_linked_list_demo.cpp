@@ -17,11 +17,12 @@ int main()
     LinkedList<string>::Iterator it = words.begin();
 
     ++it;
-    ++it;
-    ++it;
+    // ++it;
+    // ++it;
     //   words.pop_front();
     words.insert(it, "orange");
-
+    // LinkedList<string>::Iterator erased = words.erase(it);
+    cout << *words.erase(it) << " here" << endl;
     for (const string &word : words)
     {
         cout << word << endl;
