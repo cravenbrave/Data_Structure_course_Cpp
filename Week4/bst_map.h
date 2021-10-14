@@ -2,9 +2,12 @@
 #define BST_MAP_H_
 
 #include <iostream>
+#include <vector>
 
 using std::cout;
 using std::endl;
+using std::pair;
+using std::vector;
 
 template <typename Key, typename Value>
 class BinarySearchTree
@@ -125,16 +128,61 @@ class BinarySearchTree
         }
     };
 
-    Node *root;
-
 public:
+    Node *root;
     BinarySearchTree() : root(nullptr) {}
 
     ~BinarySearchTree()
     {
         delete root;
     }
+    class Iterator
+    {
+        vector<Node *> stack;
 
+    public:
+        // constructor
+        Iterator() {}
+        Iterator(Node *root)
+        {
+            for (Node *cur = root; cur != nullptr; cur = cur->left)
+            {
+                stack.push_back(cur);
+            }
+        }
+        // compare (!=)
+        bool operator!=(const Iterator &rhs) const
+        {
+            return stack != rhs.stack;
+        }
+        // dereference (*)
+        pair<Key, Value> operator*() const
+        {
+            Node *top = stack.back();
+            return pair<Key, Value>(top->key, top->value);
+        }
+        // increment (++)
+        Iterator &operator++()
+        {
+            Node *cur = stack.back()->right;
+            stack.pop_back();
+            for (; cur != nullptr; cur = cur->left)
+            {
+                stack.push_back(cur);
+            }
+            return *this;
+        }
+
+        // This is for demo purposes only, to show how Iterator works.
+        void print_stack_keys()
+        {
+            for (const Node *cur : stack)
+            {
+                cout << cur->key << ' ';
+            }
+            cout << endl;
+        }
+    };
     void print()
     {
         if (root != nullptr)
