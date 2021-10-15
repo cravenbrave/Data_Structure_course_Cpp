@@ -20,16 +20,20 @@ class BinarySearchTree
         Node(const Key &key) : key(key), left(nullptr), right(nullptr) {}
         Node(const Key &key, const Value &value) : value(value), key(key), left(nullptr), right(nullptr) {}
 
-        void print()
+        void print(int depth)
         {
             if (left != nullptr)
             {
-                left->print();
+                left->print(depth + 1);
+            }
+            for (int i = 0; i < depth; i++)
+            {
+                cout << "  ";
             }
             cout << key << ": " << value << endl;
             if (right != nullptr)
             {
-                right->print();
+                right->print(depth + 1);
             }
         }
 
@@ -126,6 +130,63 @@ class BinarySearchTree
                 }
             }
         }
+        //helper function to find the largest node in the left subtree
+        const Node *largest_node()
+        {
+            Node *largest;
+            for (largest = this; largest->right != nullptr; largest = largest->right)
+            {
+            }
+            return largest;
+        }
+        static int _erase(const Key &k, Node **node_ptr)
+        {
+            //const ptr, but can change what it points to
+            Node *node = *node_ptr;
+            if (node == nullptr)
+            {
+                return 0;
+
+            } //move to the node key == k
+            else if (k < node->key)
+            {
+                return _erase(k, &node->left);
+            }
+            else if (k > node->key)
+            {
+                return _erase(k, &node->right);
+            }
+            else //when find key == k
+            {
+                //if the node we want to delete is nullptr
+                if (node->left == nullptr && node->right == nullptr)
+                {
+                    *node_ptr = nullptr;
+                    delete node;
+                    return 1;
+                } //if node has one child
+                else if (node->left == nullptr)
+                {
+                    *node_ptr = node->right;
+                    delete node;
+                    return 1;
+                }
+                else if (node->right == nullptr)
+                {
+                    *node_ptr = node->left;
+                    delete node;
+                    return 1;
+                }
+                else
+                { //if node has two children
+                    const Node *largest = node->left->largest_node();
+                    //copy largest key and value to node, then find largest subtress's largest node
+                    node->key = largest->key;
+                    node->value = largest->value;
+                    return _erase(node->key, &node->left);
+                }
+            }
+        }
     };
 
 public:
@@ -187,7 +248,7 @@ public:
     {
         if (root != nullptr)
         {
-            root->print();
+            root->print(0);
         }
     }
 
@@ -227,6 +288,15 @@ public:
         {
             return (*root)[key];
         }
+    }
+
+    int erase(const Key &key)
+    {
+        if (!contains(key))
+        {
+            return 0;
+        }
+        return Node::_erase(key, &root);
     }
 };
 #endif /* BST_H_ */
