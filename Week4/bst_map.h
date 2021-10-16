@@ -158,7 +158,7 @@ class BinarySearchTree
             }
             else //when find key == k
             {
-                //if the node we want to delete is nullptr
+                //if the node we want to delete is leaf
                 if (node->left == nullptr && node->right == nullptr)
                 {
                     *node_ptr = nullptr;
